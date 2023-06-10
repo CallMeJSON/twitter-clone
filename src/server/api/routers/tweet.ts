@@ -18,7 +18,7 @@ export const tweetRouter = createTRPCRouter({
       const currentUserId = ctx.session?.user.id;
       const data = await ctx.prisma.tweet.findMany({
         take: limit + 1,
-        cursor: cursor ?  {createdAt_id: cursor }: undefined,
+        cursor: cursor ?  { createdAt_id: cursor }: undefined,
         orderBy: [{ createdAt: "desc" }, { id: "desc" }],
         select: {
           id: true,
@@ -34,23 +34,25 @@ export const tweetRouter = createTRPCRouter({
       });
 
       let nextCursor: typeof cursor | undefined;
-      if (data.length > length) {
+      if (data.length > limit) {
         const nextItem = data.pop()
-        if( nextItem != null) {
+        if (nextItem != null) {
           nextCursor = { id: nextItem.id, createdAt: nextItem.createdAt }
         }
+      }
 
-      return {tweets: data.map(tweet => {
+      return {
+        tweets: data.map((tweet) => {
         return {
           id: tweet.id,
           content: tweet.content,
           createdAt: tweet.createdAt,
-          likesCount: tweet._count.likes,
+          likeCount: tweet._count.likes,
           user: tweet.user,
           likedByMe: tweet.likes?.length > 0,
-        }
+        };
       }), 
-      nextCursor}
+      nextCursor,
     };
     }),
   create: protectedProcedure

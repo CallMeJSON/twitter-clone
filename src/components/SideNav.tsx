@@ -1,5 +1,6 @@
 import { signOut, signIn, useSession } from "next-auth/react";
 import Link from "next/link";
+import { About } from "~/pages/About/about";
 
 export function SideNav() {
     const session = useSession()
@@ -16,6 +17,7 @@ export function SideNav() {
                         <Link href={`/profiles/${user.id}`}>Profile</Link>
                     </li>
                 }
+                    <About></About>
                 {user == null ?
                     <li>
                         <button onClick={() => void signIn()}>Log In</button>
